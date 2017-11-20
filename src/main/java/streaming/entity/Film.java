@@ -156,7 +156,7 @@ public class Film implements Serializable {
 
     @Override
     public String toString() {
-        return "jpql.entity.Film[ id=" + id + " ]";
+        return "jpql.entity.Film[ id=" + titre + " ]";
     }
     
 }
