@@ -27,25 +27,25 @@ public class JPQLTest {
 
         EntityManagerFactory factory = Persistence.createEntityManagerFactory("PU");
         EntityManager em = factory.createEntityManager();
-        
+
         em.getTransaction().begin();// Démarre transaction: nécessaire si écritures
-        
+
         em.createQuery("UPDATE FROM Personne p SET p.nom = 'coucou'").executeUpdate();
-        em.persist( new Personne() );// INSERT
-        
+        em.persist(new Personne());// INSERT
+
         Serie s = em.find(Serie.class, 1L);// Récup 1 entité
         em.remove(s);// Pas génial puisque nécessite un find auparavant!
-        
+
         Serie dexter = new Serie();
         dexter.setTitre("DEXTER NOUV VERSION");
         dexter.setSynopsis("coucou");
         dexter.setId(1L);
         em.merge(dexter);
-        
+
         em.createQuery("DELETE FROM Serie s WHERE s.id=1").executeUpdate();
-        
+
         em.getTransaction().commit();// Valide en DB modifs
-        
+
     }
 
     @Test
@@ -285,10 +285,16 @@ public class JPQLTest {
         EntityManagerFactory factory = Persistence.createEntityManagerFactory("PU");
         EntityManager em = factory.createEntityManager();
 
+//        Query query = em.createQuery(""
+//                + "SELECT   COUNT(e) "
+//                + "FROM     Episode e "
+//                + "WHERE    e.saison.serie.titre='Dexter' ");
         Query query = em.createQuery(""
                 + "SELECT   COUNT(e) "
                 + "FROM     Episode e "
-                + "WHERE    e.saison.serie.titre='Dexter' ");
+                + "         JOIN e.saison sa "
+                + "         JOIN sa.serie s "
+                + "WHERE    s.titre='Dexter' ");
 
         Assert.assertEquals(96L, query.getSingleResult());
     }
